@@ -10,7 +10,7 @@ function Layout() {
     <div>
       {isLogin ? (
         <>
-          <Header hidden={hidden} setHidden={setHidden} />
+          <Header hidden={hidden} setHidden={setHidden} setIsLogin={setIsLogin} />
           <div className="bg-black">
             <Outlet />
           </div>

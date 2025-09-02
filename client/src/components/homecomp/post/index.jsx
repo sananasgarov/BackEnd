@@ -1,24 +1,35 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { deletePost } from "../../../services";
+import { useDispatch } from "react-redux";
 
-function Post() {
+function Post({ data }) {
+  const dispatch = useDispatch();
+  async function deleteHandler(params) {
+    try {
+      dispatch({ type: "SET_LOADER" });
+      await deletePost(data.id);
+      dispatch({ type: "REMOVE_POST", payload: data.id });
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+  }
   return (
     <div className="bg-white shadow-md rounded-xl my-4 space-y-6">
       <div>
         <img
-          src="https://websitedemos.net/tech-blogger-04/wp-content/uploads/sites/817/2021/04/post-01-free-img.jpg"
+          src={data.file}
           alt=""
-          className="object-cover w-full rounded-xl"
+          className="object-cover w-full h-auto min-w-[300px] max-w-[500px] max-h-[200px] rounded-xl"
         />
       </div>
-      <div className="space-y-6 px-6 py-9">
-        <p className="text-gray-500 font-bold">Cryptocurrency</p>
-        <h2 className="font-bold text-black text-[32px]">
-          What are blockchain transaction fees?
-        </h2>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-          eiusmod tempor incididunt ut labore et.
-        </p>
+      <div className="space-y-6 px-6 py-9 flex justify-between items-center">
+        <h2 className="font-bold text-black text-[32px]">{data.content}</h2>
+        <button
+          onClick={deleteHandler}
+          className="cursor-pointer text-red-500 text-[20px] font-bold"
+        >
+          Delete
+        </button>
       </div>
     </div>
   );

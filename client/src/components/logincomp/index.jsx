@@ -16,11 +16,12 @@ export default function LoginComp({ setIsLogin }) {
         type: "SET_USER",
         payload: data.user,
       });
+      setIsLogin(true);
+      alert("Registration successful");
     } catch (error) {
+      alert("Name exists");
       console.error("Registration failed:", error);
     }
-
-    setIsLogin(true);
   };
   return (
     <>

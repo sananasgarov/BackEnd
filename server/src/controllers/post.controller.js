@@ -4,7 +4,16 @@ const writeFileHelper = require("../helpers/write.file");
 const { v4: uuidv4 } = require("uuid");
 
 const getAllPost = (req, res) => {
-  const posts = ReadFileHelper("posts");
+  try {
+    const posts = ReadFileHelper("posts");
+    if (!posts || posts.length === 0) {
+      return res.status(404).json({ message: "No posts found" });
+    }
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 };
 const createPost = (req, res) => {
   try {
@@ -27,8 +36,8 @@ const createPost = (req, res) => {
       id: uuidv4(),
       userId,
       content,
-      file: `http://localhost:3210/uploads/${file.filename}`,
-      isActive: true
+      file: `http://localhost:5000/uploads/${file.filename}`,
+      isActive: true,
     };
     posts.unshift(newPost);
     writeFileHelper("posts", posts);
@@ -37,5 +46,19 @@ const createPost = (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+const deletePost = (req, res) => {
+  try {
+    const { id } = req.params;
+    const posts = ReadFileHelper("posts");
+    const updatedPosts = posts.filter((post) => post.id !== id);
+    if (posts.length === updatedPosts.length) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+    writeFileHelper("posts", updatedPosts);
+    return res.status(204).send();
+  } catch (error) {
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
 
-module.exports = { getAllPost, createPost };
+module.exports = { getAllPost, createPost, deletePost };

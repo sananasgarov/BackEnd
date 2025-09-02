@@ -1,14 +1,34 @@
 import React from "react";
 import AddModule from "../addmodule";
 import Overlay from "../addmodule/overlay";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
-function Navbar({ hidden, setHidden }) {
+function Navbar({ hidden, setHidden, setIsLogin }) {
+  const { posts, allPosts } = useSelector((state) => state.posts);
   const { auth } = useSelector((state) => state);
+  const dispatch = useDispatch();
+  function searchHandler(e) {
+    const keyword = e.target.value.toLowerCase();
+    if (keyword === "") {
+      dispatch({ type: "SET_POSTS", payload: allPosts });
+      return;
+    }
+    const includedPosts = allPosts.filter((post) =>
+      post.content.toLowerCase().includes(keyword)
+    );
+
+    dispatch({ type: "SET_POSTS", payload: includedPosts });
+  }
   return (
     <div className="max-w-[1320px] flex items-center mx-auto justify-between gap-[20px]">
-      <div>
+      <div className="flex items-end gap-[10px]">
         <h2 className="text-white font-bold text-[32px]">{auth?.name}</h2>
+        <button
+          onClick={() => setIsLogin(false)}
+          className="text-[20px] text-red-500 font-bold cursor-pointer"
+        >
+          Log out
+        </button>
       </div>
       <div className="shadow-xl bg-white flex rounded-2xl w-auto items-center gap-[10px] text-black py-4 px-6">
         <svg
@@ -28,6 +48,7 @@ function Navbar({ hidden, setHidden }) {
           type="text"
           className="border-none outline-none placeholder:text-white"
           placeholder="Search..."
+          onChange={searchHandler}
         />
       </div>
       <div>

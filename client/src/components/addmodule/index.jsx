@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { createPost } from "../../services";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function AddModule({ setHidden }) {
   const {auth} = useSelector((state) => state);
+  const dispatch = useDispatch();
   const [data1, setData] = useState({
     content: "",
     file: null,
@@ -13,6 +14,7 @@ export default function AddModule({ setHidden }) {
     e.preventDefault();
     try {
       const data = await createPost(data1, auth.id);
+      dispatch({ type: "SET_LOADER" });
     } catch (error) {
       console.error("Error adding module:", error);
     }
